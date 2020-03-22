@@ -1,7 +1,8 @@
 // Variables
 const carrito = document.getElementById('carrito');
 const cursos = document.getElementById('lista-cursos');
-const listaCursos = document.querySelector('#lista-carrito tbody')
+const listaCursos = document.querySelector('#lista-carrito tbody');
+const vaciarCarritoBtn = document.getElementById('vaciar-carrito');
 
 
 //Listeners
@@ -10,6 +11,12 @@ cargarEventListeners();
 function cargarEventListeners(){
     //Dispara cuando se presiona "Agregar Carrito"
     cursos.addEventListener('click', comprarCurso);
+
+    // Cuando se limina un curso del carrito
+    carrito.addEventListener('click', eliminarCurso);
+
+    // Al vaciar el carrito
+    vaciarCarritoBtn.addEventListener('click', vaciarCarrito);
     
 }
 
@@ -61,4 +68,55 @@ function insertarCarrito(curso){
     `;
     debugger;
     listaCursos.appendChild(row);
+    guardarCursoLocalStorage(curso);
+}
+
+//Elimina el curso del carrito en el DOM
+function eliminarCurso(e) {
+    e.preventDefault();
+
+    //console.log('Eliminado');
+
+    let curso;
+    if(e.target.classList.contains('borrar-curso')){
+        console.log(e.target.parentElement.parentElement.remove());
+    }
+}
+
+//Eliminar los cursos del carrito en el DOM
+function vaciarCarrito(){
+    // Forma lenta
+    //listaCursos.innerHTML = '';
+    // Forma rápida (recomendada)
+    while(listaCursos.firstChild) {
+        listaCursos.removeChild(listaCursos.firstChild);
+    }
+    return false
+}
+
+//Almacena cursos en el carrito a local storage
+
+function guardarCursoLocalStorage(curso){
+    let cursos;
+
+    cursos = obtenerCursoLocalStorage();
+
+    //console.log(cursos)
+
+    //el curso seleccionado se agrega al agreglo
+    cursos.push(curso);
+
+    localStorage.setItem('cursos', JSON.stringify(cursos))
+}
+
+// Comprueba q haya elementos en el local storage
+function obtenerCursoLocalStorage(){
+    let cursosLS;
+    // comprobamos si hay algo en el local storage
+    if (localStorage.getItem('cursos')=== null){
+        cursosLS = []
+    } else {
+        cursosLS = JSON.parse (localStorage.getItem('cursos'));
+    }
+    return cursosLS
 }
